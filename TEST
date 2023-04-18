@@ -1,0 +1,90 @@
+def all_functions(domain, codomain):
+    """
+    Return a list of all possible functions from domain to codomain
+    in the form of a list of ordered pairs.
+    """
+    # Initialize an empty list to hold all the functions
+    functions = []
+    
+    # Determine the number of functions
+    num_functions = len(codomain) ** len(domain)
+    
+    # Loop through all possible functions
+    for i in range(num_functions):
+        # Convert the current index to a list of base-n digits
+        digits = []
+        for j in range(len(domain)):
+            digits.append(i % len(codomain))
+            i //= len(codomain)
+        digits.reverse()
+        
+        # Create a new function as a list of ordered pairs
+        function = []
+        for j in range(len(domain)):
+            function.append([domain[j], codomain[digits[j]]])
+        
+        # Add the function to the list of functions
+        functions.append(function)
+    
+    # Return the list of functions
+    return functions
+
+
+def all_inj(A,B):
+    all = all_functions(A,B)
+    ans = all_functions(A,B)
+    for i in range(len(all)):
+        function = all[i]
+        list = []
+        for j in range(len(function)):
+            pair = function[j]
+            if pair[1] in list:
+                ans.remove(function)
+                break
+            if pair[1] not in list:
+                list.append(pair[1])
+    return ans
+    
+def all_sur(A, B):
+    all = all_functions(A,B)
+    ans = all_functions(A,B)
+    if A > B:
+        return []
+    for i in range(len(all)):
+        function = all[i]
+        list = []
+        check = []
+        for j in range(len(function)):
+            pair = function[j]
+            check.append(pair[1])
+        if not set(B).issubset(check):
+            ans.remove(function)
+    return ans
+            
+def all_bij(A, B):
+    sur = all_sur(A, B)
+    inj = all_inj(A, B)
+    my_intersection(sur,inj)
+    
+def my_intersection(lov1,lov2):
+    new = []
+    for item in lov1:
+        if item in lov2:
+            new.append(item)
+    return make_set(new)
+    
+def make_set(lov):
+    new = []
+    for item in lov:
+        if type(item) is list:
+            if make_set(item) not in new:
+                new.append(make_set(item))
+        elif item not in new:
+            new.append(item)
+    return new
+    
+A = [1, 2, 3]
+B2 = [4, 5, 6]
+
+print(all_bij(A,B2))
+    
